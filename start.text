@@ -1,1 +1,12 @@
+pip install pyautogui PyQt5 opencv-python-headless undetected-chromedriver selenium pytesseract numpy
+pip3 install pyautogui PyQt5 opencv-python undetected-chromedriver selenium pytesseract numpy
+
+
+
+
+
+
+
+
+
 source reservation1/bin/activate

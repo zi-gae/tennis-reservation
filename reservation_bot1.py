@@ -202,8 +202,9 @@ scroll_to_bottom()  # 시작 전 최하단으로 스크롤
 while not attempt_submission():
     time.sleep(0.5)  # 재시도 간격을 둠
 
-reservation_button = driver.find_element(By.ID, "btnReservation")
-reservation_button.click()
+reservation_button = driver.find_elements(By.CSS_SELECTOR, "[id^='btnReservation']")
+
+reservation_button[0].click()
 
 input("예약을 완료하려면 엔터를 누르세요.")
 driver.quit()
