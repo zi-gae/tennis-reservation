@@ -140,6 +140,7 @@ class ReservationApp(QWidget):
         self.location_combo = QComboBox()
         self.location_combo.addItem("탄천", 1)
         self.location_combo.addItem("수내", 5)
+        self.location_combo.addItem("야탑", 14)
         self.location_combo.addItem("대원", 6)
         layout.addWidget(self.location_combo)
 
