@@ -34,10 +34,13 @@ class ReservationApp(QWidget):
                 "탄천 평일 2코트": "FAC17",
                 "탄천 평일 3코트": "FAC18",
                 "탄천 평일 4코트": "FAC35",
+                "탄천 당일 평일 1코트": "FAC12",
+                "탄천 토요일 3코트": "FAC42",
                 "탄천 토요일 4코트": "FAC43",
                 "탄턴 일요일 1코트": "FAC41",
                 "탄천 일요일 4코트": "FAC19",
-                "탄천 당일 토요일 1코트": "FAC46"
+                "탄천 당일 토요일 1코트": "FAC46",
+                "탄천 당일 토요일 2코트": "FAC47"
             },
             "야탑":{
                 "야탑 1코트": 'FAC99',
@@ -51,8 +54,12 @@ class ReservationApp(QWidget):
                 "수내 5코트": "FAC66",
                 "수내 6코트": "FAC85"
             },
+            "양지":{
+                "양지 5코트" : "FAC72",
+                "양지 6코트" : "FAC73", 
+            },
             "대원" :{
-                "대원 1코트": "FAC67", 
+                "대원 4코트(반쪽)": "FAC67", 
             }
         }
 
@@ -60,16 +67,62 @@ class ReservationApp(QWidget):
             "정건우": {
                 "id": "doscm164",
                 "pwd": "!rjsdn123",
-                "partner_name": "양승희",
-                "partner_number": "01086159140"
+                "partner_name": "박성찬",
+                "partner_number": "01093968821"
             },
             "양승희": {
                 "id": "0603yang",
-                "pwd": "Yeji9140!!",
+                "pwd": "iru##756",
+                "partner_name": "박성찬",
+                "partner_number": "01093968821"
+            },
+            "최종문": {
+                "id": "swingcjm",
+                "pwd": "qtm@@890",
                 "partner_name": "정건우",
                 "partner_number": "01048085382"
+            },
+            "장유진":{
+                "id": "jyj8308",
+                "pwd": "s21923015!",
+                "partner_name": "정건우",
+                "partner_number": "01048085382"
+            },
+            "김병구":{
+                "id": "kimbyeonggu1",
+                "pwd": "asdf2620530@",
+                "partner_name": "정건우",
+                "partner_number": "01048085382"
+            },
+             "김혜원":{
+                "id": "hw6220",
+                "pwd": "jskim6215!",
+                "partner_name": "양승희",
+                "partner_number": "01086159140"
+            },
+            "박성찬": {
+                "id": "pptroll",
+                "pwd": "@@ignite123",
+                "partner_name": "양승희",
+                "partner_number": "01086159140"
             }
         }
+
+
+        # self.users = {
+        #     "정건우": {
+        #         "id": "doscm164",
+        #         "pwd": "!rjsdn123",
+        #         "partner_name": "최종문",
+        #         "partner_number": "01087848966"
+        #     },
+        #     "양승희": {
+        #         "id": "0603yang",
+        #         "pwd": "Yeji9140!!",
+        #         "partner_name": "박성찬",
+        #         "partner_number": "01093968821"
+        #     },
+        # }
 
 
         # self.users = {
@@ -141,6 +194,7 @@ class ReservationApp(QWidget):
         self.location_combo.addItem("탄천", 1)
         self.location_combo.addItem("수내", 5)
         self.location_combo.addItem("야탑", 14)
+        self.location_combo.addItem("양지", 2)
         self.location_combo.addItem("대원", 6)
         layout.addWidget(self.location_combo)
 
@@ -209,11 +263,14 @@ class ReservationApp(QWidget):
         if location == "야탑": 
             for display_name, card_code in self.card_options["야탑"].items():
                 self.card_id_combo.addItem(display_name, card_code) 
+        if location == "양지": 
+            for display_name, card_code in self.card_options["양지"].items():
+                self.card_id_combo.addItem(display_name, card_code) 
         
     
     def start_reservation(self):
         # 입력된 정보 가져오기
-        driver = Chrome(version_main=132)
+        driver = Chrome(version_main=134)
         self.driver = driver
         user_id = self.user_id_input.text()
         user_pw = self.user_pw_input.text()
@@ -223,15 +280,7 @@ class ReservationApp(QWidget):
         pending_time = self.pending_time_input.text()
         card_id = self.card_id_combo.currentData()  # 실제 예약에 필요한 card_id 값
         
-        # 예약 절차 시작
-        self.driver.get("https://res.isdc.co.kr")
-        time.sleep(5)
-
         
-        
-        # 로그인
-        self.driver.find_element(By.ID, "web_id").send_keys(user_id)
-        self.driver.find_element(By.ID, "web_pw").send_keys(user_pw)
 
         # 예약 시간 대기
         move_distance = 100  # 픽셀 단위로 좌우로 이동할 거리
@@ -241,11 +290,26 @@ class ReservationApp(QWidget):
             current_time = datetime.now().strftime("%H:%M:%S")
             print(f"Current time is {current_time}, waiting until 07:00 AM.") 
             if "06:58:00" <= current_time <= "07:05:00":  # 06:58 ~ 07:05 사이의 조건
+                # 예약 절차 시작
+                self.driver.get("https://res.isdc.co.kr")
+                time.sleep(5)
+                
+                # 로그인
+                self.driver.find_element(By.ID, "web_id").send_keys(user_id)
+                time.sleep(2)
+                self.driver.find_element(By.ID, "web_pw").send_keys(user_pw)                
+
                 print("It's exactly 07:00 AM, proceeding with the next steps.", )
                 break
             time.sleep(3)  
 
-        self.driver.find_element(By.ID, "btn_login").click()
+        try:
+            print("로그인 버튼 클릭 시도") 
+            self.driver.find_element(By.ID, "btn_login").click()
+        except Exception as e:
+            print(f"로그인 버튼 클릭 중 오류 발생: {e}")
+            self.driver.quit()
+            return
         
         # 예약 페이지 이동 후 특정 위치, 코트, 날짜 및 회차 선택
         time.sleep(5)
@@ -259,57 +323,69 @@ class ReservationApp(QWidget):
        
 
         # 날짜 클릭
+        max_attempts = 10  # 최대 재시도 횟수 설정
         refresh_done = False  # 리프레시 여부를 확인하는 플래그
         while True:
             current_time = datetime.now().strftime("%H:%M:%S")
             print(f"Current time is {current_time}, waiting until 07:00 AM.")            
 
-            if current_time >= "06:59:59":
+            if current_time >= "06:59:55":
                 print("It's exactly 07:00 AM, attempting to find and click the target date.")
                 if not refresh_done:  # 리프레시가 아직 실행되지 않았다면
                     print("It's exactly 07:00 AM, refreshing the page once.")
                     self.driver.refresh()
                     refresh_done = True  # 플래그를 True로 변경
                     print("Page refreshed.")
-                    
-                try:
-                    # 지정된 날짜 요소가 존재하면 클릭
-                    # 선택한 날짜가 다음달인 경우, 다음달 버튼 클릭 
-                    
-                    print("@@@month",formatted_date.split("-")[1], datetime.now().month)
-                    if formatted_date.split("-")[1] != str(datetime.now().month):
-                        print("다음 달로 이동합니다.") 
-                        self.driver.find_element(By.CLASS_NAME, "ui-datepicker-next").click()
-                    print("@@@formatted_date",formatted_date)
-                    calendar_date = self.driver.find_element(By.ID, formatted_date)
-                    calendar_date.click()
-                    print(f"Clicked on the calendar date: {formatted_date}")
-                    break  # 클릭 성공 시 루프 중단
-                except NoSuchElementException:
-                    print("요소를 찾을 수 없습니다. 페이지를 새로고침합니다.")
-                    self.driver.refresh()  # 새로고침
-                    body_class = self.driver.find_element(By.TAG_NAME, "body").get_attribute("class")
-                    if "neterror" in body_class:
-                        print("네트워크 오류 발생. 페이지를 이동합니다.")
-                        self.driver.get("https://res.isdc.co.kr/index.do")
-                        self.driver.find_element(By.ID, str(location_id)).click()
-                        time.sleep(1)  
-                        self.driver.find_element(By.ID, card_id).click()
-                except ElementClickInterceptedException:
-                    print("클릭이 가로막혔습니다. 대기 후 재시도합니다.")  # 새로고침하지 않음
-                    calendar_date_text = calendar_date.text  # 현재 텍스트 가져오기
-                    self.driver.execute_script(
-                        """
-                        arguments[0].innerHTML = '<font>' + arguments[1] + '</font>';
-                        """,
-                        calendar_date,
-                        calendar_date_text
-                    )
-                    self.driver.execute_script("""arguments[0].setAttribute('style', 'pointer-events: auto; background-color: rgb(212, 245, 193); color: rgb(0, 0, 0);'); arguments[0].classList.add('ui-state-default', 'spandate', 'usedate');
-                    """, calendar_date)
-                except Exception as e:
-                    print(f"예상치 못한 오류 발생: {e}. 페이지를 새로고침합니다.")
-                    self.driver.refresh()  # 새로고침
+
+                attempt = 0  # 시도 횟수 초기화 
+                
+                while attempt < max_attempts:
+                    try:
+                        # 지정된 날짜 요소가 존재하면 클릭
+                        # 선택한 날짜가 다음달인 경우, 다음달 버튼 클릭 
+                        
+                        print("@@@month",formatted_date.split("-")[1], datetime.now().month)
+                        if formatted_date.split("-")[1] != str(datetime.now().month):
+                            print("다음 달로 이동합니다.") 
+                            self.driver.find_element(By.CLASS_NAME, "ui-datepicker-next").click()
+                        print("@@@formatted_date",formatted_date)
+                        calendar_date = self.driver.find_element(By.ID, formatted_date)
+                        calendar_date.click()
+                        print(f"Clicked on the calendar date: {formatted_date}")
+                        break  # 클릭 성공 시 루프 중단
+                    except NoSuchElementException:
+                        attempt += 1
+                        print(f"요소를 찾을 수 없습니다. {attempt}/{max_attempts} 재시도 중...")
+                        time.sleep(1)  # 1초 대기 후 재시도
+                        if attempt >= max_attempts:
+                            print("최대 재시도 횟수 도달. 페이지를 새로고침합니다.")
+                            self.driver.refresh()
+                            attempt = 0  # 다시 초기화하고 반복
+                        self.driver.refresh()  # 새로고침
+                        body_class = self.driver.find_element(By.TAG_NAME, "body").get_attribute("class")
+                        if "neterror" in body_class:
+                            print("네트워크 오류 발생. 페이지를 이동합니다.")
+                            self.driver.get("https://res.isdc.co.kr/index.do")
+                            self.driver.find_element(By.ID, str(location_id)).click()
+                            time.sleep(1)  
+                            self.driver.find_element(By.ID, card_id).click()
+                    except ElementClickInterceptedException:
+                        print("클릭이 가로막혔습니다. 대기 후 재시도합니다.")  # 새로고침하지 않음
+                        calendar_date_text = calendar_date.text  # 현재 텍스트 가져오기
+                        self.driver.execute_script(
+                            """
+                            arguments[0].innerHTML = '<font>' + arguments[1] + '</font>';
+                            """,
+                            calendar_date,
+                            calendar_date_text
+                        )
+                        self.driver.execute_script("""arguments[0].setAttribute('style', 'pointer-events: auto; background-color: rgb(212, 245, 193); color: rgb(0, 0, 0);'); arguments[0].classList.add('ui-state-default', 'spandate', 'usedate');
+                        """, calendar_date)
+                    except Exception as e:
+                        print(f"예상치 못한 오류 발생: {e}. 페이지를 새로고침합니다.")
+                        attempt = 0  # 다시 초기화하고 반복
+                        self.driver.refresh()  # 새로고침
+                break  # 클릭 성공 시 루프 중단 
             time.sleep(1)
         
        
